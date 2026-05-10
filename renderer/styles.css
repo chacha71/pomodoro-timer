@@ -1,0 +1,208 @@
+/* ── 基础 ───────────────────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: #0d0d1a;
+  color: #eee;
+  width: 400px;
+  height: 520px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  -webkit-app-region: no-drag;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 28px 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background:
+    radial-gradient(ellipse 380px 280px at 50% -20%, rgba(245,87,108,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 300px 200px at 50% 110%, rgba(240,147,251,0.06) 0%, transparent 70%);
+}
+
+/* ── 标题 ──────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.logo { font-size: 24px; }
+.header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── 模式切换 ──────────────────────────────────────── */
+.mode-tabs {
+  display: flex;
+  gap: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+.mode-tab {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.5px;
+}
+.mode-tab:hover { color: #aaa; }
+.mode-tab.active {
+  background: linear-gradient(135deg, rgba(240,147,251,0.2), rgba(245,87,108,0.2));
+  color: #f5576c;
+  box-shadow: 0 0 12px rgba(245,87,108,0.15);
+}
+
+/* ── 计时器 ────────────────────────────────────────── */
+.timer-wrap {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  margin-bottom: 20px;
+}
+.timer-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.06);
+  stroke-width: 6;
+}
+.ring-progress {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.timer-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.timer-display {
+  font-size: 54px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(245,87,108,0.15);
+}
+.timer-label {
+  font-size: 13px;
+  color: #666;
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+
+/* ── 按钮 ──────────────────────────────────────────── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  padding: 12px 44px;
+  border: none;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: #fff;
+  min-width: 110px;
+  box-shadow: 0 4px 20px rgba(245,87,108,0.25);
+  transition: all 0.25s ease;
+  letter-spacing: 1px;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(245,87,108,0.4);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #666;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.btn-icon:hover {
+  background: rgba(255,255,255,0.1);
+  color: #aaa;
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* ── 统计 ──────────────────────────────────────────── */
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 24px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+  width: 100%;
+  justify-content: center;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.stat-num {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.stat-lbl {
+  font-size: 11px;
+  color: #555;
+  letter-spacing: 0.5px;
+}
+.stat-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,0.06);
+}
+
+/* ── 底部提示 ──────────────────────────────────────── */
+.footer-hint {
+  margin-top: auto;
+  font-size: 11px;
+  color: #333;
+  letter-spacing: 0.5px;
+}

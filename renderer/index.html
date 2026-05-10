@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=400">
+<title>🍅 番茄钟</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+  <!-- 标题 -->
+  <div class="header">
+    <span class="logo">🍅</span>
+    <h1>番茄钟</h1>
+  </div>
+
+  <!-- 模式切换 -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="pomodoro">专注</button>
+    <button class="mode-tab" data-mode="shortBreak">短休息</button>
+    <button class="mode-tab" data-mode="longBreak">长休息</button>
+  </div>
+
+  <!-- 圆形计时器 -->
+  <div class="timer-wrap">
+    <svg viewBox="0 0 280 280">
+      <defs>
+        <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#f093fb"/>
+          <stop offset="100%" stop-color="#f5576c"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <circle class="ring-bg"  cx="140" cy="140" r="120"/>
+      <circle class="ring-progress" cx="140" cy="140" r="120"
+        stroke-dasharray="753.98" stroke-dashoffset="0"
+        stroke="url(#pg)" filter="url(#glow)"/>
+    </svg>
+    <div class="timer-center">
+      <div class="timer-display" id="timerDisplay">25:00</div>
+      <div class="timer-label" id="timerStatus">准备开始</div>
+    </div>
+  </div>
+
+  <!-- 控制按钮 -->
+  <div class="controls">
+    <button class="btn-icon" id="resetBtn" title="重置 (R)">↺</button>
+    <button class="btn-primary" id="mainBtn">开始</button>
+    <button class="btn-icon" id="closeBtn" title="最小化到托盘 (Esc)">—</button>
+  </div>
+
+  <!-- 统计 -->
+  <div class="stats">
+    <div class="stat"><span class="stat-num" id="todayCount">0</span><span class="stat-lbl">今日完成</span></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><span class="stat-num" id="totalCount">0</span><span class="stat-lbl">累计番茄</span></div>
+  </div>
+
+  <!-- 底部提示 -->
+  <div class="footer-hint">空格 开始/暂停 · R 重置 · Esc 托盘</div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
