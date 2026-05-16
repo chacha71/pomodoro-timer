@@ -1,10 +1,68 @@
-/* ── 基础 ───────────────────────────────────────────── */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* ══════════════════════════════════════════════
+   「暖烬」— Warm Ember Pomodoro Timer
+   黑暗 × 暖光 × 噪点纹理
+   ══════════════════════════════════════════════ */
 
+/* ── Design Tokens ──────────────────────────── */
+:root {
+  --bg: #0c0c10;
+  --surface: #16161f;
+  --surface-hover: #1e1e2a;
+  --surface-active: #26263a;
+  --border: rgba(255, 255, 255, 0.04);
+  --border-hover: rgba(255, 255, 255, 0.08);
+
+  /* 专注模式：暖烬橙 */
+  --ember: #ff6b35;
+  --ember-dark: #cc4a1a;
+  --ember-glow: rgba(255, 107, 53, 0.25);
+  --ember-from: #ff6b35;
+  --ember-to: #ffd166;
+
+  /* 休息模式：幽泉绿 */
+  --teal: #4ecdc4;
+  --teal-dark: #2ea89f;
+  --teal-glow: rgba(78, 205, 196, 0.2);
+  --teal-from: #4ecdc4;
+  --teal-to: #44a08d;
+
+  /* 文字 */
+  --text-primary: #ece8e1;
+  --text-secondary: #8a857e;
+  --text-muted: #5a5650;
+
+  /* 字体 */
+  --font-display: 'Teko', 'Impact', sans-serif;
+  --font-ui: 'Sora', -apple-system, 'Segoe UI', sans-serif;
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-full: 999px;
+}
+
+/* ── Reset ──────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ── 噪点纹理层 ─────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  filter: url(#noise);
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+}
+
+.noise-svg { display: none; }
+
+/* ── Body ───────────────────────────────────── */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: #0d0d1a;
-  color: #eee;
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text-primary);
   width: 400px;
   height: 520px;
   overflow: hidden;
@@ -15,6 +73,7 @@ body {
   -webkit-app-region: no-drag;
 }
 
+/* ── Container ──────────────────────────────── */
 .container {
   width: 100%;
   height: 100%;
@@ -22,78 +81,121 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
   background:
-    radial-gradient(ellipse 380px 280px at 50% -20%, rgba(245,87,108,0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 300px 200px at 50% 110%, rgba(240,147,251,0.06) 0%, transparent 70%);
+    radial-gradient(ellipse 320px 260px at 50% 40%, rgba(255, 107, 53, 0.05) 0%, transparent 70%),
+    var(--bg);
 }
 
-/* ── 标题 ──────────────────────────────────────────── */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-.logo { font-size: 24px; }
-.header h1 {
-  font-size: 20px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #f093fb, #f5576c);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ── 模式切换 ──────────────────────────────────────── */
+/* ── 模式切换 ──────────────────────────────── */
 .mode-tabs {
   display: flex;
-  gap: 6px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 12px;
+  gap: 4px;
+  background: var(--surface);
+  border-radius: var(--radius-full);
   padding: 4px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   width: 100%;
+  border: 1px solid var(--border);
 }
 .mode-tab {
   flex: 1;
-  padding: 8px 0;
+  padding: 7px 0;
   border: none;
-  border-radius: 9px;
+  border-radius: var(--radius-full);
   background: transparent;
-  color: #666;
-  font-size: 13px;
+  color: var(--text-muted);
+  font-size: 12.5px;
   font-weight: 600;
+  font-family: var(--font-ui);
   cursor: pointer;
-  transition: all 0.25s ease;
-  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.8px;
 }
-.mode-tab:hover { color: #aaa; }
+.mode-tab:hover { color: var(--text-secondary); }
 .mode-tab.active {
-  background: linear-gradient(135deg, rgba(240,147,251,0.2), rgba(245,87,108,0.2));
-  color: #f5576c;
-  box-shadow: 0 0 12px rgba(245,87,108,0.15);
+  background: linear-gradient(135deg, var(--ember), var(--ember-dark));
+  color: #fff;
+  box-shadow: 0 2px 16px var(--ember-glow);
 }
 
-/* ── 计时器 ────────────────────────────────────────── */
+/* 休息模式时 tab 颜色切换 */
+body.rest-mode .mode-tab.active {
+  background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+  box-shadow: 0 2px 16px var(--teal-glow);
+}
+
+/* ── 计时器 ────────────────────────────────── */
 .timer-wrap {
   position: relative;
   width: 240px;
   height: 240px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
-.timer-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+
+.timer-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
 .ring-bg {
   fill: none;
-  stroke: rgba(255,255,255,0.06);
-  stroke-width: 6;
+  stroke: rgba(255, 255, 255, 0.04);
+  stroke-width: 5;
 }
 .ring-progress {
   fill: none;
-  stroke-width: 6;
+  stroke-width: 5;
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.3s ease;
+  transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              stroke 0.6s ease;
 }
 
+/* 进度环渐变颜色——跟随模式 */
+.timer-wrap[data-mode="pomodoro"] .ring-progress,
+.timer-wrap[data-mode="pomodoro"] .ring-bg {
+  --ring-from: var(--ember);
+  --ring-to: var(--ember-to);
+}
+.timer-wrap[data-mode="pomodoro"] .ring-progress {
+  stroke: url(#ringActive);
+  filter: drop-shadow(0 0 12px var(--ember-glow));
+}
+
+.timer-wrap[data-mode="shortBreak"] .ring-progress,
+.timer-wrap[data-mode="longBreak"] .ring-progress {
+  stroke: url(#ringRest);
+  filter: drop-shadow(0 0 12px var(--teal-glow));
+}
+.timer-wrap[data-mode="shortBreak"] .ring-progress,
+.timer-wrap[data-mode="longBreak"] .ring-progress {
+  --ring-rest-from: var(--teal);
+  --ring-rest-to: var(--teal-to);
+}
+.timer-wrap[data-mode="shortBreak"] .ring-bg,
+.timer-wrap[data-mode="longBreak"] .ring-bg {
+  stroke: rgba(78, 205, 196, 0.06);
+}
+
+/* 运行中的脉冲光效 */
+.timer-wrap.running .ring-progress {
+  animation: glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 8px var(--ember-glow)); }
+  50%      { filter: drop-shadow(0 0 18px var(--ember-glow)); }
+}
+.timer-wrap.running[data-mode="shortBreak"] .ring-progress,
+.timer-wrap.running[data-mode="longBreak"] .ring-progress {
+  animation-name: glowPulseTeal;
+}
+@keyframes glowPulseTeal {
+  0%, 100% { filter: drop-shadow(0 0 8px var(--teal-glow)); }
+  50%      { filter: drop-shadow(0 0 18px var(--teal-glow)); }
+}
+
+/* ── 计时器中心 ─────────────────────────────── */
 .timer-center {
   position: absolute;
   inset: 0;
@@ -103,77 +205,128 @@ body {
   align-items: center;
 }
 .timer-display {
-  font-size: 54px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 4px;
   font-variant-numeric: tabular-nums;
-  color: #fff;
-  text-shadow: 0 0 30px rgba(245,87,108,0.15);
-}
-.timer-label {
-  font-size: 13px;
-  color: #666;
-  margin-top: 6px;
-  letter-spacing: 1px;
+  color: var(--text-primary);
+  text-shadow: 0 0 40px rgba(236, 232, 225, 0.06);
 }
 
-/* ── 按钮 ──────────────────────────────────────────── */
+.timer-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-top: 8px;
+  letter-spacing: 2px;
+  transition: color 0.4s ease;
+}
+.timer-wrap[data-mode="pomodoro"] .timer-label.running {
+  color: var(--ember);
+}
+.timer-wrap[data-mode="shortBreak"] .timer-label.running,
+.timer-wrap[data-mode="longBreak"] .timer-label.running {
+  color: var(--teal);
+}
+
+/* ── 按钮 ──────────────────────────────────── */
 .controls {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 22px;
 }
 
 .btn-primary {
-  padding: 12px 44px;
+  padding: 12px 48px;
   border: none;
-  border-radius: 30px;
-  font-size: 15px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
   font-weight: 600;
+  font-family: var(--font-ui);
   cursor: pointer;
-  background: linear-gradient(135deg, #f093fb, #f5576c);
+  background: linear-gradient(135deg, var(--ember), var(--ember-dark));
   color: #fff;
-  min-width: 110px;
-  box-shadow: 0 4px 20px rgba(245,87,108,0.25);
-  transition: all 0.25s ease;
-  letter-spacing: 1px;
+  min-width: 120px;
+  letter-spacing: 1.5px;
+  box-shadow: 0 4px 24px var(--ember-glow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%);
+  transition: transform 0.5s ease;
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 28px rgba(245,87,108,0.4);
+  box-shadow: 0 6px 32px var(--ember-glow);
 }
-.btn-primary:active { transform: translateY(0); }
+.btn-primary:hover::before {
+  transform: translateX(30%);
+}
+.btn-primary:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* 休息模式的按钮 */
+body.rest-mode .btn-primary {
+  background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+  box-shadow: 0 4px 24px var(--teal-glow);
+}
+body.rest-mode .btn-primary:hover {
+  box-shadow: 0 6px 32px var(--teal-glow);
+}
+
+/* 运行中按钮 */
+.btn-primary.is-running {
+  background: var(--surface);
+  box-shadow: none;
+  color: var(--text-secondary);
+}
+.btn-primary.is-running:hover {
+  transform: translateY(-2px);
+  background: var(--surface-hover);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.btn-primary.is-running::before { display: none; }
 
 .btn-icon {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.06);
-  color: #666;
-  font-size: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 .btn-icon:hover {
-  background: rgba(255,255,255,0.1);
-  color: #aaa;
-  border-color: rgba(255,255,255,0.12);
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  border-color: var(--border-hover);
+}
+.btn-icon:active {
+  transform: scale(0.92);
 }
 
-/* ── 统计 ──────────────────────────────────────────── */
+/* ── 统计 ──────────────────────────────────── */
 .stats {
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 14px 24px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.05);
+  gap: 20px;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
   width: 100%;
   justify-content: center;
 }
@@ -184,25 +337,46 @@ body {
   gap: 2px;
 }
 .stat-num {
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: var(--text-primary);
 }
 .stat-lbl {
-  font-size: 11px;
-  color: #555;
-  letter-spacing: 0.5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 .stat-divider {
   width: 1px;
-  height: 28px;
-  background: rgba(255,255,255,0.06);
+  height: 30px;
+  background: var(--border);
 }
 
-/* ── 底部提示 ──────────────────────────────────────── */
+/* ── 底部提示 ──────────────────────────────── */
 .footer-hint {
   margin-top: auto;
   font-size: 11px;
-  color: #333;
-  letter-spacing: 0.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+.hint-key {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  color: var(--text-secondary);
+  letter-spacing: 0;
+}
+.hint-dot {
+  margin: 0 4px;
+  color: var(--border-hover);
 }

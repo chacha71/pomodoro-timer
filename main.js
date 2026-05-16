@@ -15,7 +15,7 @@ function createTrayIcon() {
       const dist = Math.sqrt((x - cx + 0.5) ** 2 + (y - cy + 0.5) ** 2);
       const i = (y * size + x) * 4;
       if (dist <= r) {
-        buf[i] = 245; buf[i+1] = 87; buf[i+2] = 108; buf[i+3] = 255;
+        buf[i] = 255; buf[i+1] = 107; buf[i+2] = 53; buf[i+3] = 255;
       } else {
         buf[i+3] = 0;
       }
@@ -31,7 +31,7 @@ function createWindow() {
     height: 520,
     resizable: false,
     center: true,
-    backgroundColor: '#0d0d1a',
+    backgroundColor: '#0c0c10',
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),

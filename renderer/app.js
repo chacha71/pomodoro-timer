@@ -90,6 +90,24 @@ function notify(title, body) {
 }
 
 // ── 模式切换 ──────────────────────────────────────────
+function updateModeUI() {
+  const mode = state.mode;
+  $$('.mode-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.mode === mode));
+
+  // 计时器包裹元素标记模式
+  const wrap = $('#timerWrap');
+  wrap.dataset.mode = mode;
+
+  // body 标记是否为休息模式（用于按钮/tab颜色切换）
+  document.body.classList.toggle('rest-mode', mode !== 'pomodoro');
+
+  // 主按钮样式
+  const btn = $('#mainBtn');
+  btn.classList.remove('is-running');
+  btn.textContent = '开始';
+}
+
 function switchMode(mode) {
   if (state.running) return;
 
@@ -97,16 +115,14 @@ function switchMode(mode) {
   state.running = false;
   state.mode = mode;
   state.timeLeft = CONFIG[mode].time;
-  $('#mainBtn').textContent = '开始';
 
-  $$('.mode-tab').forEach(t =>
-    t.classList.toggle('active', t.dataset.mode === mode));
+  updateModeUI();
 
   // 重置进度环动画
   $('.ring-progress').style.transition = 'none';
   renderTimer();
   requestAnimationFrame(() => requestAnimationFrame(() => {
-    $('.ring-progress').style.transition = 'stroke-dashoffset 0.3s ease';
+    $('.ring-progress').style.transition = 'stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
   }));
 
   setStatus(`准备${CONFIG[mode].label}`);
@@ -117,6 +133,8 @@ function endSession() {
   state.running = false;
   clearInterval(state.timerId);
   $('#mainBtn').textContent = '开始';
+  $('#mainBtn').classList.remove('is-running');
+  $('#timerWrap').classList.remove('running');
 
   playAlarm();
 
@@ -137,6 +155,8 @@ function endSession() {
   // 自动开始下一轮
   setTimeout(() => {
     $('#mainBtn').textContent = '暂停';
+    $('#mainBtn').classList.add('is-running');
+    $('#timerWrap').classList.add('running');
     state.running = true;
     setStatus(CONFIG[state.mode].label === '专注' ? '专注中...' : '休息中...');
     state.timerId = setInterval(tick, 1000);
@@ -157,10 +177,14 @@ function toggleTimer() {
     clearInterval(state.timerId);
     state.running = false;
     $('#mainBtn').textContent = '继续';
+    $('#mainBtn').classList.remove('is-running');
+    $('#timerWrap').classList.remove('running');
     setStatus('已暂停');
   } else {
     state.running = true;
     $('#mainBtn').textContent = '暂停';
+    $('#mainBtn').classList.add('is-running');
+    $('#timerWrap').classList.add('running');
     setStatus(CONFIG[state.mode].label === '专注' ? '专注中...' : '休息中...');
     state.timerId = setInterval(tick, 1000);
   }
@@ -172,6 +196,8 @@ function resetTimer() {
   state.running = false;
   state.timeLeft = CONFIG[state.mode].time;
   $('#mainBtn').textContent = '开始';
+  $('#mainBtn').classList.remove('is-running');
+  $('#timerWrap').classList.remove('running');
   renderTimer();
   setStatus(`准备${CONFIG[state.mode].label}`);
 }
@@ -205,6 +231,8 @@ document.addEventListener('visibilitychange', () => {
     clearInterval(state.timerId);
     state.running = false;
     $('#mainBtn').textContent = '继续';
+    $('#mainBtn').classList.remove('is-running');
+    $('#timerWrap').classList.remove('running');
     setStatus('已暂停（窗口失焦）');
   }
 });
@@ -214,3 +242,4 @@ loadStats();
 renderTimer();
 renderStats();
 setStatus('准备开始');
+updateModeUI();
